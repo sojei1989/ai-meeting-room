@@ -1,8 +1,28 @@
 # 三方開發會議室
 
+[English](#english)
+
 在你自己的 Mac 上，讓 Claude Code 和 Codex 在同一個畫面裡幫你開發。你用白話說要做什麼，兩個 AI 討論、提方案、做事，每一個會動到檔案的步驟都要你按下核准才會執行。
 
 這是個人開發的開源工具，和 Anthropic、OpenAI 沒有隸屬或合作關係。
+
+## 這間會議室是一家公司
+
+這不是一套固定的 AI 組合，而是一間由你經營的公司。
+
+一家公司不會要求每個進來的人都長得一樣，每個人訂閱的 AI 也不一樣。你有哪些 AI，就雇用哪些成員，再照它們的特長安排職位。AI 負責提方案、做事、互相檢查，最後由你決定。每個人的會議室，都會長成不一樣的樣子。
+
+這是我把會議室開源的原因。
+
+目前的版本先從 Claude 和 Codex 兩位成員開始。接下來的方向是讓更多 AI 的命令列工具加入，例如 Gemini CLI：新成員先參加討論和審查，確認接得上核准與還原機制之後，才開放修改檔案。
+
+## 關於作者
+
+我是平面設計師，不會寫程式。
+
+AI 是我的工作夥伴。我負責視覺和最後的判斷，程式的部分交給 AI 完成。這間會議室本身，也是我和 Claude、Codex 一起做出來的。
+
+我同時也做行銷，還在持續學習。平常會同時用好幾家 AI，想知道每一家擅長什麼、怎麼讓它們互相補位。這間會議室就是我自己每天在用的工具。
 
 ## 適合誰
 
@@ -199,3 +219,48 @@ meetings/           會議紀錄（不進 git）
 ## 授權
 
 Apache License 2.0，全文見 [LICENSE](LICENSE)，著作權聲明見 [NOTICE](NOTICE)。
+
+---
+
+## English
+
+**AI Meeting Room** is a local app for macOS where Claude Code and Codex CLI work together on your project in one window, and you make the final call.
+
+> **Note:** the interface is currently in Traditional Chinese only.
+
+### The idea: your meeting room is a company
+
+This is not a fixed AI lineup. It is a company you run.
+
+No company expects every hire to be the same, and no two people subscribe to the same set of AI tools. You hire the AIs you already pay for, give each one a role that fits its strengths, and keep the final decision for yourself. Every meeting room ends up shaped differently. That is why I open-sourced it.
+
+The current version starts with two members, Claude Code and Codex CLI. The plan is to let more AI CLIs join (Gemini CLI first). New members start in discussion and review only, and get write access once they work with the approval and rollback system.
+
+### How a meeting works
+
+1. Describe what you want in plain language.
+2. Claude reads your project and proposes a plan, options, and risks.
+3. Codex checks feasibility and lists each change as an approval card, marked low, medium, or high risk.
+4. Nothing touches your files until you approve a card. A git restore point is saved before each run, so you can roll back in one click.
+5. Codex can only write to the files listed on the approved card. Going out of scope stops the run and reverts it.
+6. Claude reviews the result, and the meeting is saved as a markdown record.
+
+Other features: an "explain in plain words" button on every message, asset hand-off cards when the AIs need images from you, sound alerts, and optional Telegram notifications.
+
+### Requirements
+
+- macOS, Node.js 20+, Git
+- Claude Code and Codex CLI, each signed in with your own account
+- Usage counts against your own Claude and ChatGPT plans. This project never collects, stores, or forwards your login credentials.
+
+Download the repo, double-click `start.command`, and a setup wizard walks you through the rest. The app only listens on `127.0.0.1`.
+
+### About the author
+
+I'm a graphic designer, and I don't write code. AI is my working partner: I handle the visuals and the decisions, and AI handles the code. This meeting room was built that way too, with Claude and Codex.
+
+I also work in marketing and I'm still learning. I use several AI tools every day, and I built this to see what each one is good at and how they can cover for each other.
+
+This is an independent open-source project, not affiliated with Anthropic or OpenAI. Claude and Claude Code are trademarks of Anthropic; Codex and ChatGPT are trademarks of OpenAI.
+
+Licensed under Apache 2.0.
