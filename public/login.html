@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>登入｜三方開發會議室</title>
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180.png">
+<style>
+:root{
+  color-scheme:light;
+  --ground:#F4F7FB;--panel:#FFFFFF;--raised:#F0F4F8;--line:#D6DEE8;
+  --ink:#1F2937;--dim:#536274;--faint:#718096;--amber:#E9A244;--stop:#B93C31;
+  --sans:"Noto Sans TC",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{color-scheme:dark;--ground:#14161B;--panel:#1B1E25;--raised:#232733;--line:#343A48;--ink:#E7EAF0;--dim:#AAB2C1;--faint:#858E9E;--stop:#F08073}
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;min-height:100dvh;display:grid;place-items:center;padding:max(24px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 50% 8%,rgba(233,162,68,.14),transparent 34rem),
+    var(--ground);
+  color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;
+}
+.card{width:min(100%,400px);padding:32px 28px 28px;background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 60px rgba(31,41,55,.12)}
+.icon{display:block;width:72px;height:72px;margin:0 auto 20px;border-radius:17px;box-shadow:0 8px 24px rgba(31,41,55,.16)}
+h1{margin:0;text-align:center;font-size:24px;line-height:1.3;letter-spacing:.01em}
+.intro{margin:9px 0 26px;text-align:center;color:var(--dim);font-size:14px}
+label{display:block;margin:0 0 8px;font-weight:700;font-size:14px}
+input,button{width:100%;min-height:50px;border-radius:10px;font:inherit}
+input{padding:11px 13px;background:var(--raised);border:1px solid var(--line);color:var(--ink);outline:none}
+input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(233,162,68,.18)}
+button{margin-top:12px;padding:11px 16px;border:1px solid var(--amber);background:var(--amber);color:#1A1206;font-weight:700;cursor:pointer}
+button:hover:not(:disabled){filter:brightness(1.04)}
+button:disabled{opacity:.58;cursor:wait}
+.status{min-height:25px;margin:12px 0 0;color:var(--stop);font-size:14px;text-align:center}
+.note{margin:20px 0 0;padding-top:18px;border-top:1px solid var(--line);color:var(--faint);font-size:12px;text-align:center}
+@media (max-width:420px){.card{padding:28px 22px 24px;border-radius:15px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main class="card">
+  <img class="icon" src="/assets/icon-180.png" width="72" height="72" alt="">
+  <h1>三方開發會議室</h1>
+  <p class="intro">輸入會議室密碼後才能查看內容與進行操作。</p>
+  <form id="loginForm" action="/api/login" method="post">
+    <label for="passcode">會議室密碼</label>
+    <input id="passcode" name="passcode" type="password" autocomplete="current-password" maxlength="4096" autofocus required>
+    <button id="submitButton" type="submit">登入</button>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+  </form>
+  <p class="note">登出、登入逾時或伺服器重啟後，需要重新驗證。</p>
+</main>
+<script>
+const form = document.querySelector('#loginForm');
+const passcode = document.querySelector('#passcode');
+const submitButton = document.querySelector('#submitButton');
+const status = document.querySelector('#status');
+let countdownTimer = null;
+
+function show(message) {
+  status.textContent = message;
+}
+
+function unlock() {
+  submitButton.disabled = false;
+  submitButton.textContent = '登入';
+  passcode.disabled = false;
+  passcode.focus();
+}
+
+function waitBeforeRetry(seconds) {
+  let remaining = Math.max(1, Number(seconds) || 1);
+  passcode.disabled = true;
+  submitButton.disabled = true;
+  clearInterval(countdownTimer);
+  const paint = () => {
+    submitButton.textContent = remaining + ' 秒後可重試';
+    show('錯誤次數過多，請稍後再試。');
+    remaining -= 1;
+    if (remaining < 0) {
+      clearInterval(countdownTimer);
+      unlock();
+      show('可以再試一次。');
+    }
+  };
+  paint();
+  countdownTimer = setInterval(paint, 1000);
+}
+
+form.addEventListener('submit', async event => {
+  event.preventDefault();
+  clearInterval(countdownTimer);
+  submitButton.disabled = true;
+  submitButton.textContent = '驗證中…';
+  show('');
+
+  try {
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ passcode: passcode.value })
+    });
+    if (response.ok) {
+      passcode.value = '';
+      location.replace('/');
+      return;
+    }
+
+    passcode.value = '';
+    if (response.status === 429) {
+      waitBeforeRetry(response.headers.get('Retry-After'));
+      return;
+    }
+    if (response.status === 503) show('Mac 上的密碼鎖尚未設定。設定完成並重啟伺服器後再試。');
+    else if (response.status === 413) show('輸入內容太長，請重新輸入。');
+    else if (response.status === 401) show('密碼不正確。');
+    else show('目前無法登入，請稍後再試。');
+    unlock();
+  } catch {
+    passcode.value = '';
+    show('無法連上會議室，請確認 Mac 上的伺服器仍在執行。');
+    unlock();
+  }
+});
+</script>
+</body>
+</html>

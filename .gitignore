@@ -1,0 +1,24 @@
+node_modules/
+.DS_Store
+**/.DS_Store
+
+# 每台電腦自己的設定、密碼與金鑰：絕對不能進版本紀錄
+config.json
+config.broken.json
+.secrets/
+
+# 會議室執行時自己會寫的檔案：不進版本紀錄，免得被工單越界檢查誤判、被還原清掉
+meetings/
+.meeting-room-server.pid
+.recent-workspaces.json
+server/.restart-token
+workspace/
+
+# 打包輸出放 GitHub Releases，不進版本紀錄
+dist/
+
+_to_delete/
+.impeccable/
+
+# 頭像設計比較用，不發布
+_頭像候選/

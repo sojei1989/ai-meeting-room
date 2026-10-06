@@ -1,0 +1,97 @@
+{
+  "port": 4477,
+  "listen": {
+    "local": "127.0.0.1",
+    "tailscale": ""
+  },
+  "workspace": "",
+  "workspaceRoot": "",
+  "activeProject": "",
+  "_portable": {
+    "configured": false,
+    "version": 1,
+    "notes": "首次安裝到別台電腦時，啟動器會用白話問題引導完成 workspace、Tailscale 與密碼檢查"
+  },
+  "_說明": "workspaceRoot 是固定讀取根目錄；activeProject 只代表目前優先處理的子專案。workspace 保留供舊版升級使用。請不要直接用前一台電腦的路徑或 Tailscale 位址。",
+  "modelSelection": {
+    "claude": {
+      "model": "opus",
+      "effort": "medium"
+    },
+    "codex": {
+      "model": "gpt-6.1-sol",
+      "effort": "medium"
+    }
+  },
+  "claude": {
+    "bin": "claude",
+    "args": [
+      "-p",
+      "{PROMPT}",
+      "--output-format",
+      "json",
+      "--allowedTools",
+      "Read,Grep,Glob",
+      "--add-dir",
+      "{ATTACH}"
+    ],
+    "cwd": "{WORKSPACE}"
+  },
+  "codexRead": {
+    "bin": "codex",
+    "args": [
+      "exec",
+      "--sandbox",
+      "read-only",
+      "--skip-git-repo-check",
+      "-C",
+      "{WORKSPACE}",
+      "{PROMPT}"
+    ],
+    "cwd": "{WORKSPACE}"
+  },
+  "codexWrite": {
+    "bin": "codex",
+    "args": [
+      "exec",
+      "--sandbox",
+      "workspace-write",
+      "--skip-git-repo-check",
+      "-C",
+      "{WORKSPACE}",
+      "{PROMPT}"
+    ],
+    "cwd": "{WORKSPACE}"
+  },
+  "_逾時說明": "若你要讓長任務順利完成，請在系統上保有穩定網路，預設上限是 30 分鐘。",
+  "timeoutMs": 1800000,
+  "_白話解釋說明": "白話解釋優先序由 explainBy 決定：ollama、gemini、claude。",
+  "explainBy": "ollama",
+  "explainTimeoutMs": 90000,
+  "ollama": {
+    "url": "",
+    "model": "qwen3:14b"
+  },
+  "_ollama說明": "若你是經 Tailscale 連到另一台電腦上的 Ollama，請填入該台的完整網址。",
+  "ollamaTimeoutMs": 60000,
+  "gemini": {
+    "bin": "gemini",
+    "args": [
+      "-m",
+      "gemini-3.8-flash",
+      "-p",
+      "{PROMPT}"
+    ],
+    "cwd": "{WORKSPACE}"
+  },
+  "imageDelivery": {
+    "mode": "manual",
+    "externalTool": {
+      "configured": false,
+      "authorized": false
+    }
+  },
+  "_產圖說明": "第一版只建立含尺寸、格式、數量與存放路徑的人工交件項目。外部產圖工具目前不由此專案自動呼叫。",
+  "autosaveMs": 180000,
+  "_附件說明": "{ATTACH} 會被換成 meetings/attachments 的絕對路徑；使用者從對話框丟進來的截圖與檔案存在那裡，Claude 用 Read 看、Codex 用 --image 看。"
+}

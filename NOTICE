@@ -1,0 +1,8 @@
+三方開發會議室
+Copyright 2026 鄭宇傑
+
+本專案以 Apache License 2.0 授權，全文見 LICENSE。
+
+本專案是個人開發的開源工具，與 Anthropic、OpenAI 沒有隸屬、合作或背書關係。
+Claude 與 Claude Code 是 Anthropic 的商標；Codex 與 ChatGPT 是 OpenAI 的商標。
+本專案只會呼叫使用者自己電腦上安裝的官方 CLI，不會收集、儲存或轉送任何帳號登入資料。

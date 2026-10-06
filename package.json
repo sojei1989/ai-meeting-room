@@ -1,0 +1,17 @@
+{
+  "name": "ai-meeting-room",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "本機三方開發會議室：你做決定，Claude Code 與 Codex CLI 在同一個畫面上協作",
+  "scripts": {
+    "start": "node server/launcher.js",
+    "once": "node server/launcher.js",
+    "dev": "node --watch-path=./server --watch-path=./config.json server/index.js"
+  },
+  "license": "Apache-2.0",
+  "author": "鄭宇傑",
+  "engines": {
+    "node": ">=20"
+  }
+}
